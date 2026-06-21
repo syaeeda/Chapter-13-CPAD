@@ -1,0 +1,43 @@
+### Test 1 — List and seed data
+GET http://localhost:8000/api/books
+Expected: 200, three books from the database
+
+### Test 1b — Get single book
+GET http://localhost:8000/api/books/1
+
+### Test 2a — Search (q=clean)
+GET http://localhost:8000/api/books?q=clean
+Expected: 200, only "Clean Code"
+
+### Test 2b — Search (limit=2)
+GET http://localhost:8000/api/books?limit=2
+Expected: 200, first two rows
+
+### Test 3 — Create new book
+POST http://localhost:8000/api/books
+Content-Type: application/json
+
+{ "title":"Refactoring", "author":"Martin Fowler", "year":2018 }
+Expected: 201 Created, Location: /api/books/4
+
+### Test 4a — Partial update (genre only)
+PUT http://localhost:8000/api/books/1
+Content-Type: application/json
+
+{ "genre": "Software Craftsmanship" }
+Expected: 200
+
+### Test 4b — Delete a book
+DELETE http://localhost:8000/api/books/2
+Expected: 200
+
+### Test 5 — Verify book exists after retrieval
+GET http://localhost:8000/api/books/1
+
+### Part F — SQL Injection Attempt 1 (OR injection on id)
+GET http://localhost:8000/api/books/1%20OR%201=1
+Expected: 404 (should not find book with ID "1 OR 1=1")
+
+### Part F — SQL Injection Attempt 2 (quote escape in q parameter)
+GET http://localhost:8000/api/books?q='%20OR%20'1'='1
+Expected: 200, but empty data array
