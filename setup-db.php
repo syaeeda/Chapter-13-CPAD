@@ -5,8 +5,12 @@
  */
 
 try {
-    // Connect to MySQL server (without specifying a database initially)
-    $pdo = new PDO('mysql:host=127.0.0.1;port=3306;charset=utf8mb4', 'root', '', [
+    // Connect to MySQL server using env vars
+    $host = $_ENV['DB_HOST'] ?? '127.0.0.1';
+    $port = $_ENV['DB_PORT'] ?? '3306';
+    $user = $_ENV['DB_USER'] ?? 'root';
+    $pass = $_ENV['DB_PASS'] ?? '';
+    $pdo = new PDO("mysql:host={$host};port={$port};charset=utf8mb4", $user, $pass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     ]);
     

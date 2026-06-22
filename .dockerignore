@@ -1,0 +1,13 @@
+.git
+.gitignore
+.env
+.env.example
+books-frontend
+vendor
+var
+node_modules
+*.md
+requests.http
+test.http
+test-comprehensive.http
+package-lock.json
