@@ -19,12 +19,20 @@ final class Database
             $_ENV['DB_NAME']    ?? 'books_api', 
             $_ENV['DB_CHARSET'] ?? 'utf8mb4' 
         ); 
-        try { 
-            self::$pdo = new PDO($dsn, $_ENV['DB_USER'] ?? 'root', $_ENV['DB_PASS'] ?? '', [ 
-                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, 
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, 
-                PDO::ATTR_EMULATE_PREPARES   => false, 
-            ]); 
+        $options = [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+        ];
+
+        // TiDB Cloud (Render's free MySQL) requires SSL
+        if (($_ENV['DB_SSL'] ?? 'false') === 'true') {
+            $options[PDO::MYSQL_ATTR_SSL_CA] = '/etc/ssl/certs/ca-certificates.crt';
+            $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER] = false;
+        }
+
+        try {
+            self::$pdo = new PDO($dsn, $_ENV['DB_USER'] ?? 'root', $_ENV['DB_PASS'] ?? '', $options);
         } catch (PDOException $e) { 
             error_log('[DB] ' . $e->getMessage()); 
             throw new \RuntimeException('Database connection failed', 500, $e); 

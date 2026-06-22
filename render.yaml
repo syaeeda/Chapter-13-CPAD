@@ -26,6 +26,8 @@ services:
           property: password
       - key: DB_CHARSET
         value: utf8mb4
+      - key: DB_SSL
+        value: "true"
       - key: APP_DEBUG
         value: "true"
       - key: JWT_SECRET

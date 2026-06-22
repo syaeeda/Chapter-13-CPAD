@@ -10,9 +10,17 @@ try {
     $port = $_ENV['DB_PORT'] ?? '3306';
     $user = $_ENV['DB_USER'] ?? 'root';
     $pass = $_ENV['DB_PASS'] ?? '';
-    $pdo = new PDO("mysql:host={$host};port={$port};charset=utf8mb4", $user, $pass, [
+    $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    ]);
+    ];
+
+    // TiDB Cloud (Render's free MySQL) requires SSL
+    if (($_ENV['DB_SSL'] ?? 'false') === 'true') {
+        $options[PDO::MYSQL_ATTR_SSL_CA] = '/etc/ssl/certs/ca-certificates.crt';
+        $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER] = false;
+    }
+
+    $pdo = new PDO("mysql:host={$host};port={$port};charset=utf8mb4", $user, $pass, $options);
     
     // Read the schema file
     $schema = file_get_contents(__DIR__ . '/sql/schema.sql');
