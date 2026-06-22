@@ -28,7 +28,9 @@ final class Database
         // TiDB Cloud (Render's free MySQL) requires SSL
         if (($_ENV['DB_SSL'] ?? 'false') === 'true') {
             $options[PDO::MYSQL_ATTR_SSL_CA] = '/etc/ssl/certs/ca-certificates.crt';
-            $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER] = false;
+            if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER')) {
+                $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER] = false;
+            }
         }
 
         try {
